@@ -9,6 +9,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <AuthProvider>
+      <Layout />
     </AuthProvider>
   );
 }
