@@ -12,7 +12,7 @@ interface AuthProps{
 
 
 const TOKEN_KEY = "token";
-export const API_URL = "https://api.developbetterapps.com";
+export const API_URL = "https://api.developbetterapps.com/api";
 const AuthContext = React.createContext<AuthProps>({});
 
 
