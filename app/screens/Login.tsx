@@ -1,12 +1,21 @@
 import { View, TextInput, Button, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 export default function Login() {
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const {onLogin, onRegister} = useAuth();
+  
+  useEffect(() => {
+    const testCall = async () => {
+      const result = await axios.get('${API_URL}/users');
+      console.log("testcall:  ",result);
+    }
+    testCall();
+  }, []);
   
   const login = async () => {
     const result = await onLogin!(email, password);
