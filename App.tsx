@@ -41,7 +41,11 @@ export default function App() {
             }}
           />
         ) : (
-          <Stack.Screen name="Login" component={Auth} />
+          <>
+            <Stack.Screen name="Login" component={Auth} />
+            <Stack.Screen name="Register" component={Auth} />
+          </>
+          
         )}
       </Stack.Navigator>
     </NavigationContainer>

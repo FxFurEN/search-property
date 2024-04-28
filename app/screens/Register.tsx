@@ -4,22 +4,24 @@ import { supabase } from '../../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation();
 
-
-  async function signInWithEmail() {
+  async function signUpWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
     })
 
     if (error) Alert.alert(error.message)
-    else navigation.navigate('Home');
+    else navigation.navigate('Login');
     setLoading(false)
   }
 
@@ -46,11 +48,11 @@ export default function Login() {
           autoCapitalize={'none'}
         />
       </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Войти" disabled={loading} onPress={() => signInWithEmail()} />
+      <View style={styles.verticallySpaced}>
+        <Button title="Зарегистрироваться" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Регистрация" onPress={() => navigation.navigate('Register')} />
+        <Button title="Авторизоваться" onPress={() => navigation.navigate('Login')} />
       </View>
     </View>
   )
