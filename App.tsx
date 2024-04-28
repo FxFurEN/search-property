@@ -37,7 +37,7 @@ export default function App() {
             name="Home"
             component={Home}
             options={{
-              headerRight: () => <Button  onPress={signOut} title="Sign Out" />,
+              headerRight: () => <Button  onPress={signOut} title="Выйти" />,
             }}
           />
         ) : (

@@ -37,7 +37,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
-          label="Email"
+          label="Почта"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
           onChangeText={(text) => setEmail(text)}
           value={email}
@@ -47,7 +47,7 @@ export default function Login() {
       </View>
       <View style={styles.verticallySpaced}>
         <Input
-          label="Password"
+          label="Пароль"
           leftIcon={{ type: 'font-awesome', name: 'lock' }}
           onChangeText={(text) => setPassword(text)}
           value={password}
@@ -57,10 +57,10 @@ export default function Login() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+        <Button title="Войти" disabled={loading} onPress={() => signInWithEmail()} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+        <Button title="Зарегистрироваться" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
     </View>
   )
