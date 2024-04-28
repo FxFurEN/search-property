@@ -1,53 +1,67 @@
-import { View, TextInput, Button, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import React, { useState } from 'react'
+import { Alert, StyleSheet, View } from 'react-native'
+import { supabase } from '../../lib/supabase'
+import { Button, Input } from 'react-native-elements'
 
 export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const {onLogin, onRegister} = useAuth();
-  
-  useEffect(() => {
-    const testCall = async () => {
-      const result = await axios.get('${API_URL}/users');
-      console.log("testcall:  ",result);
-    }
-    testCall();
-  }, []);
-  
-  const login = async () => {
-    const result = await onLogin!(email, password);
-    if(result && result.error){
-      alert(result.msg);
-  }}
+  async function signInWithEmail() {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
 
-  const register = async () => {
-    const result = await onRegister!(email, password);
-    if(result && result.error){
-      alert(result.msg);
-    }else{
-      login();
-    }
+    if (error) Alert.alert(error.message)
+    setLoading(false)
+  }
+
+  async function signUpWithEmail() {
+    setLoading(true)
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+
+    if (error) Alert.alert(error.message)
+    if (!session) Alert.alert('Please check your inbox for email verification!')
+    setLoading(false)
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.form}>
-          <TextInput 
-            style={styles.input} 
-            placeholder='Email' 
-            value={email} 
-            onChangeText={(text: string) => setEmail(text)} />
-          <TextInput 
-            style={styles.input} 
-            placeholder='Password' 
-            value={password} 
-            secureTextEntry={true}
-            onChangeText={(text: string) => setPassword(text)} />
-          <Button title='Login' onPress={login} />
-          <Button title='Register' onPress={register} />
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
+          label="Email"
+          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+          placeholder="email@address.com"
+          autoCapitalize={'none'}
+        />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Input
+          label="Password"
+          leftIcon={{ type: 'font-awesome', name: 'lock' }}
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+          secureTextEntry={true}
+          placeholder="Password"
+          autoCapitalize={'none'}
+        />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
     </View>
   )
@@ -55,20 +69,15 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   container: {
-   alignItems: 'center',
-   justifyContent: 'center',
-   flex: 1,
-   width: '100%',
+    marginTop: 40,
+    padding: 12,
   },
-  form: {
-    gap: 10,
-    width: '60%',
+  verticallySpaced: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    alignSelf: 'stretch',
   },
-  input: {
-    height: 44,
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 10,
-    backgroundColor: 'white',
-  }
-});
+  mt20: {
+    marginTop: 20,
+  },
+})
