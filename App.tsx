@@ -5,6 +5,7 @@ import Auth from './app/screens/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './app/screens/Home';
+import Profile from './app/screens/Profile';
 import { Button, View } from 'react-native';
 import { Session } from '@supabase/supabase-js';
 import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
@@ -25,6 +26,10 @@ const signOut = async () => {
           label="Главная"
           onPress={() => props.navigation.navigate('Home')}
         />  
+        <DrawerItem
+          label="Профиль"
+          onPress={() => props.navigation.navigate('Profile')}
+        /> 
       </DrawerContentScrollView>
       <View style={{ borderTopWidth: 1, borderTopColor: '#ddd' }}>
       <DrawerItem
@@ -78,6 +83,6 @@ export default function App() {
 const DrawerNavigator = () => (
   <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
     <Drawer.Screen name="Home" component={Home} />
-    {/* Другие экраны */}
+    <Drawer.Screen name="Profile" component={Profile} />
   </Drawer.Navigator>
 );
