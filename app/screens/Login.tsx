@@ -18,7 +18,7 @@ export default function Login({navigation}) {
     })
 
     if (error) Alert.alert(error.message)
-    else navigation.navigate('Home');
+    else
     setLoading(false)
   }
 
