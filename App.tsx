@@ -1,9 +1,14 @@
-import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
-import { supabase } from './lib/supabase'
-import Auth from './app/screens/Login'
-import { View, Text } from 'react-native'
-import { Session } from '@supabase/supabase-js'
+import 'react-native-url-polyfill/auto';
+import { useState, useEffect } from 'react';
+import { supabase } from './lib/supabase';
+import Auth from './app/screens/Login';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './app/screens/Home';
+import { Button } from 'react-native';
+import { Session } from '@supabase/supabase-js';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -16,12 +21,29 @@ export default function App() {
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
+
+    
   }, [])
 
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    };
+
   return (
-    <View>
-      <Auth />
-      {session && session.user && <Text>{session.user.id}</Text>}
-    </View>
-  )
+    <NavigationContainer>
+      <Stack.Navigator>
+        {session ? (
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerRight: () => <Button  onPress={signOut} title="Sign Out" />,
+            }}
+          />
+        ) : (
+          <Stack.Screen name="Login" component={Auth} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
