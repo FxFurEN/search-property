@@ -5,20 +5,38 @@ import Auth from './app/screens/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './app/screens/Home';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
 import { Session } from '@supabase/supabase-js';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react-native-reanimated';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-// Компонент для Drawer Navigation
-const DrawerNavigator = () => (
-  <Drawer.Navigator>
-    <Drawer.Screen name="Home" component={Home} />
-  </Drawer.Navigator>
-);
+const signOut = async () => {
+  await supabase.auth.signOut();
+  };
+
+  const DrawerContent = (props) => {
+    return (
+      <>
+      <DrawerContentScrollView {...props}>
+        <DrawerItem
+          label="Главная"
+          onPress={() => props.navigation.navigate('Home')}
+        />  
+      </DrawerContentScrollView>
+      <View style={{ borderTopWidth: 1, borderTopColor: '#ddd' }}>
+      <DrawerItem
+        label="Выйти"
+        onPress={signOut}
+      />
+      </View>
+      </>
+      
+    );
+  };
+
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -35,9 +53,7 @@ export default function App() {
     
   }, [])
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    };
+  
 
   return (
     <NavigationContainer >
@@ -58,3 +74,10 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const DrawerNavigator = () => (
+  <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+    <Drawer.Screen name="Home" component={Home} />
+    {/* Другие экраны */}
+  </Drawer.Navigator>
+);
