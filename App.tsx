@@ -7,8 +7,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './app/screens/Home';
 import { Button } from 'react-native';
 import { Session } from '@supabase/supabase-js';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import * as React from 'react-native-reanimated';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+// Компонент для Drawer Navigation
+const DrawerNavigator = () => (
+  <Drawer.Navigator>
+    <Drawer.Screen name="Home" component={Home} />
+  </Drawer.Navigator>
+);
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -30,16 +40,13 @@ export default function App() {
     };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
+    <NavigationContainer >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {session ? (
           <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              headerRight: () => <Button  onPress={signOut} title="Выйти" />,
-            }}
-          />
+          name="DrawerNavigator" 
+          component={DrawerNavigator} 
+        />
         ) : (
           <>
             <Stack.Screen name="Login" component={Auth} />
