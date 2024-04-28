@@ -10,6 +10,8 @@ import { Button, View } from 'react-native';
 import { Session } from '@supabase/supabase-js';
 import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react-native-reanimated';
+import Register from './app/screens/Register';
+import Login from './app/screens/Login';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -18,7 +20,7 @@ const signOut = async () => {
   await supabase.auth.signOut();
   };
 
-  const DrawerContent = (props) => {
+  const DrawerContent = (props: any) => {
     return (
       <>
       <DrawerContentScrollView {...props}>
@@ -70,8 +72,8 @@ export default function App() {
         />
         ) : (
           <>
-            <Stack.Screen name="Login" component={Auth} />
-            <Stack.Screen name="Register" component={Auth} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
           </>
           
         )}

@@ -4,11 +4,11 @@ import { supabase } from '../../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 
-export default function Register() {
+export default function Register({navigation}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigation = useNavigation();
 
   async function signUpWithEmail() {
     setLoading(true)
@@ -16,12 +16,12 @@ export default function Register() {
       data: { session },
       error,
     } = await supabase.auth.signUp({
+      phone: phone,
       email: email,
       password: password,
     })
 
     if (error) Alert.alert(error.message)
-    else navigation.navigate('Login');
     setLoading(false)
   }
 
@@ -34,6 +34,16 @@ export default function Register() {
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
+          autoCapitalize={'none'}
+        />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
+          label="Телефон"
+          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+          onChangeText={(text) => setPhone(text)}
+          value={email}
+          placeholder="+7 (7xx) xxx-xx-xx"
           autoCapitalize={'none'}
         />
       </View>
@@ -52,7 +62,7 @@ export default function Register() {
         <Button title="Зарегистрироваться" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Авторизоваться" onPress={() => navigation.navigate('Login')} />
+        <Button title="Есть аккаунт?" onPress={() => navigation.navigate('Login')} />
       </View>
     </View>
   )
@@ -72,3 +82,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 })
+
