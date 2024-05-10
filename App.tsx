@@ -72,6 +72,7 @@ const TabNavigator = () => (
       },
       tabBarActiveTintColor: 'tomato',
       tabBarInactiveTintColor: 'gray',
+      headerShown: false
     })}
   >
     <Tab.Screen name="Поиск" component={Home} />
