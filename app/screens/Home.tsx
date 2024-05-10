@@ -2,7 +2,15 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+
+
+const INITIAL_REGION={
+  latitude: 51.2239,
+  longitude: 51.3707,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421
+}
 
 export default function Home() {
   return (
@@ -25,7 +33,12 @@ export default function Home() {
         />
       </View>
       <View style={styles.mapContainer}>
-        <MapView style={styles.map} />
+        <MapView 
+          style={styles.map} 
+          provider={PROVIDER_GOOGLE} 
+          initialRegion={INITIAL_REGION}
+          showsUserLocation
+        />
       </View>
     </View>
   )
