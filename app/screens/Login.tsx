@@ -4,11 +4,10 @@ import { supabase } from '../../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 
-export default function Login() {
+export default function Login({navigation}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigation = useNavigation();
 
 
   async function signInWithEmail() {
@@ -19,7 +18,7 @@ export default function Login() {
     })
 
     if (error) Alert.alert(error.message)
-    else navigation.navigate('Home');
+    else
     setLoading(false)
   }
 
@@ -50,7 +49,7 @@ export default function Login() {
         <Button title="Войти" disabled={loading} onPress={() => signInWithEmail()} />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Регистрация" onPress={() => navigation.navigate('Register')} />
+        <Button title="Нет аккаунта?" onPress={() => navigation.navigate('Register', { screen: 'Register' })} />
       </View>
     </View>
   )
