@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import MapView from 'react-native-maps';
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
           inputContainerStyle={styles.inputContainer} 
           inputStyle={styles.input} 
           autoCapitalize={'none'}
-          containerStyle={{ height: 70 }}
+          containerStyle={{width: '70%' }}
         />
         <Button
           icon={<Ionicons name="options-outline" size={24} color="black" />} 
@@ -23,21 +24,25 @@ export default function Home() {
           iconContainerStyle={{ marginRight: 8 }} 
         />
       </View>
+      <View style={styles.mapContainer}>
+        <MapView style={styles.map} />
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '70%',
     marginTop: 30,
   },
   row: {
+    alignItems: 'center',
+    height: 60, 
     flexDirection: 'row', 
-    justifyContent: 'space-between', 
   },
-  inputContainer: {
-    flex: 1, 
+  inputContainer: { 
+    marginTop: 25,
+    height: '70%',
     marginRight: 10, 
     borderRadius: 10, 
     borderWidth: 1, 
@@ -51,10 +56,17 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 10,
     width: 100, 
-    height: 45,
+    height: '70%'
   },
   transparentButton: {
-    backgroundColor: 'transparent', // Сделать фон кнопки прозрачным
-    borderWidth: 0, // Убрать границы кнопки
+    backgroundColor: 'transparent',
+    borderWidth: 0, 
+  },
+  mapContainer: {
+    width: '100%',
+  },
+  map: {
+    width: '100%',
+    height: '100%',
   },
 })
