@@ -12,7 +12,7 @@ const INITIAL_REGION={
   longitudeDelta: 0.0421
 }
 
-export default function Home() {
+export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -30,6 +30,7 @@ export default function Home() {
           buttonStyle={[styles.button, styles.transparentButton]}
           titleStyle={{ color: 'black', marginLeft: 8 }} 
           iconContainerStyle={{ marginRight: 8 }} 
+          onPress={() => navigation.navigate('Filter', { screen: 'Filter' })}
         />
       </View>
       <View style={styles.mapContainer}>
