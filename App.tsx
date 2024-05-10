@@ -8,14 +8,17 @@ import Home from './app/screens/Home';
 import Profile from './app/screens/Profile';
 import { Session } from '@supabase/supabase-js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react-native-reanimated';
 import Register from './app/screens/Register';
 import Login from './app/screens/Login';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import News from './app/screens/News';
+import Filter from './app/screens/Filter'; 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const FilterStack = createStackNavigator();
 
 const signOut = async () => {
   await supabase.auth.signOut();
@@ -47,8 +50,10 @@ export default function App() {
           <>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
+           
           </>
         )}
+         <Stack.Screen name="Filter" component={FilterNavigator} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -79,4 +84,11 @@ const TabNavigator = () => (
     <Tab.Screen name="Профиль" component={Profile} />
     <Tab.Screen name="Новости" component={News} />
   </Tab.Navigator>
+);
+
+
+const FilterNavigator = () => (
+  <FilterStack.Navigator>
+    <FilterStack.Screen name="Фильтры" component={Filter} />
+  </FilterStack.Navigator>
 );
