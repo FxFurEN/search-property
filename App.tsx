@@ -12,6 +12,7 @@ import * as React from 'react-native-reanimated';
 import Register from './app/screens/Register';
 import Login from './app/screens/Login';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import News from './app/screens/News';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,8 +62,10 @@ const TabNavigator = () => (
 
         if (route.name === 'Поиск') {
           iconName = focused ? 'search' : 'search-outline'; 
-        } else if (route.name === 'Profile') {
+        } else if (route.name === 'Профиль') {
           iconName = focused ? 'person' : 'person-outline'; 
+        }else if (route.name === 'Новости') {
+          iconName = focused ? 'bookmarks' : 'bookmarks-outline'; 
         }
 
         return <Ionicons name={iconName} size={size} color={color} />;
@@ -72,6 +75,7 @@ const TabNavigator = () => (
     })}
   >
     <Tab.Screen name="Поиск" component={Home} />
-    <Tab.Screen name="Profile" component={Profile} />
+    <Tab.Screen name="Профиль" component={Profile} />
+    <Tab.Screen name="Новости" component={News} />
   </Tab.Navigator>
 );
