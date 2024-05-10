@@ -15,6 +15,7 @@ import Login from './app/screens/Login';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import News from './app/screens/News';
 import Filter from './app/screens/Filter'; 
+import { Button } from 'react-native-elements';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,6 +90,18 @@ const TabNavigator = () => (
 
 const FilterNavigator = () => (
   <FilterStack.Navigator>
-    <FilterStack.Screen name="Фильтры" component={Filter} />
+    <FilterStack.Screen 
+      name="Фильтры" 
+      component={Filter} 
+      options={{
+        headerRight: () => (
+           <Button 
+            title={'Сбросить'} 
+            titleStyle={{ color: 'black' }}
+            buttonStyle={{backgroundColor: 'transparent', borderWidth: 0, }}
+          />
+        )
+      }}
+    />
   </FilterStack.Navigator>
 );
