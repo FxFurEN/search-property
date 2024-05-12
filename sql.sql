@@ -10,6 +10,18 @@ INSERT INTO PropertyTypes (type_name) VALUES
     ('Коммерческая'),
     ('Гараж');
 
+-- Создание таблицы Городов
+CREATE TABLE Cities (
+    city_id SERIAL PRIMARY KEY,
+    city_name VARCHAR(100) NOT NULL
+);
+
+-- Вставка городов
+INSERT INTO Cities (city_name) VALUES
+    ('Уральск'),
+    ('Актобе'),
+    ('Атырау'),
+
 -- Создание таблицы Недвижимости
 CREATE TABLE Properties (
     property_id SERIAL PRIMARY KEY,
@@ -21,5 +33,6 @@ CREATE TABLE Properties (
     number_of_rooms INTEGER,
     area DECIMAL(10, 2),
     photos TEXT[],
-    coordinates  VARCHAR(255) NOT NULL, 
+    coordinates VARCHAR(255) NOT NULL,
+    city_id INTEGER REFERENCES Cities(city_id)
 );
