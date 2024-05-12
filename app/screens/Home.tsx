@@ -1,10 +1,11 @@
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Button, Input } from 'react-native-elements';
-import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import axios from 'axios';
 import { supabase } from '../../lib/supabase';
+import PropertyDetails from '../components/PropertyDetails'; 
 
 const INITIAL_REGION={
   latitude: 51.2239,
@@ -13,12 +14,9 @@ const INITIAL_REGION={
   longitudeDelta: 0.0421
 }
 
-const onMarkerPress=()=>{
-  Alert.alert('onMarkerPress')
-}
-
 export default function Home({ navigation }) {
   const [properties, setProperties] = useState([]);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     fetchProperties();
@@ -63,8 +61,10 @@ export default function Home({ navigation }) {
       setProperties(updatedProperties);
     }
   };
-  
-  
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -100,11 +100,15 @@ export default function Home({ navigation }) {
                 coordinate={{ latitude: property.latitude, longitude: property.longitude }}
                 title={property.title}
                 description={property.description}
+                onPress={openModal} // Добавленный обработчик onPress
               />
             ) : null
           ))}
         </MapView>
       </View>
+      <PropertyDetails isVisible={isModalVisible} onClose={() => setModalVisible(false)}>
+        <Text>Это модальное окно</Text>
+      </PropertyDetails>
     </View>
   );
 }
