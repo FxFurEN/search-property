@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 
 const INITIAL_REGION={
@@ -39,7 +39,13 @@ export default function Home({ navigation }) {
           provider={PROVIDER_GOOGLE} 
           initialRegion={INITIAL_REGION}
           showsUserLocation
-        />
+        >
+          <Marker
+            coordinate={INITIAL_REGION}
+            title="Текущее местоположение"
+            description="Текущее местоположение"
+          />
+        </MapView>
       </View>
     </View>
   )
