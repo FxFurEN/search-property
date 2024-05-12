@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
@@ -10,6 +10,10 @@ const INITIAL_REGION={
   longitude: 51.3707,
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
+}
+
+const onMarkerPress=()=>{
+  Alert.alert('onMarkerPress')
 }
 
 export default function Home({ navigation }) {
@@ -44,6 +48,7 @@ export default function Home({ navigation }) {
             coordinate={INITIAL_REGION}
             title="Текущее местоположение"
             description="Текущее местоположение"
+            onPress={onMarkerPress}
           />
         </MapView>
       </View>
