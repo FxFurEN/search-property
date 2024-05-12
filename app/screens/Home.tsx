@@ -98,9 +98,7 @@ export default function Home({ navigation }) {
               <Marker
                 key={index}
                 coordinate={{ latitude: property.latitude, longitude: property.longitude }}
-                title={property.title}
-                description={property.description}
-                onPress={openModal} // Добавленный обработчик onPress
+                onPress={openModal}
               />
             ) : null
           ))}
