@@ -153,7 +153,11 @@ export default function Home({ navigation }) {
                 <Text style={styles.propertyDescription}>{selectedProperty.description}</Text>
               </View>
               <View style={styles.buttonContainer}>
-                  <Button title="Подробнее" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
+                  <Button title="Подробнее" 
+                    buttonStyle={[styles.button, styles.modalButton]} 
+                    titleStyle={styles.modalButtonText} 
+                    onPress={() => navigation.navigate('Detail', { screen: 'Detail' })} 
+                  />
                   <Button title="Позвонить" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
               </View>
             </ScrollView>
