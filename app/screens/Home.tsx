@@ -153,8 +153,8 @@ export default function Home({ navigation }) {
                 <Text style={styles.propertyDescription}>{selectedProperty.description}</Text>
               </View>
               <View style={styles.buttonContainer}>
-                <Button title="Подробнее" onPress={() => {/* Действие при нажатии */}} />
-                <Button title="Позвонить" onPress={() => {/* Действие при нажатии */}} />
+                  <Button title="Подробнее" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
+                  <Button title="Позвонить" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
               </View>
             </ScrollView>
           </>
@@ -193,6 +193,13 @@ const styles = StyleSheet.create({
     width: 100, 
     height: '70%'
   },
+  modalButton: {
+    backgroundColor: '#ffdb58',
+    width: 160,
+  },
+  modalButtonText: {
+    color: 'black',
+  },  
   transparentButton: {
     backgroundColor: 'transparent',
     borderWidth: 0, 
