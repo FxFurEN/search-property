@@ -156,7 +156,10 @@ export default function Home({ navigation }) {
                   <Button title="Подробнее" 
                     buttonStyle={[styles.button, styles.modalButton]} 
                     titleStyle={styles.modalButtonText} 
-                    onPress={() => navigation.navigate('Detail', { screen: 'Detail' })} 
+                    onPress={() => {
+                      navigation.navigate('Detail', { screen: 'Detail' });
+                      setModalVisible(false);
+                    }} 
                   />
                   <Button title="Позвонить" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
               </View>
