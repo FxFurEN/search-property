@@ -17,6 +17,7 @@ const INITIAL_REGION={
 export default function Home({ navigation }) {
   const [properties, setProperties] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   useEffect(() => {
     fetchProperties();
@@ -62,9 +63,11 @@ export default function Home({ navigation }) {
     }
   };
 
-  const openModal = () => {
+  const openModal = (property) => {
+    setSelectedProperty(property);
     setModalVisible(true);
   };
+  
 
   return (
     <View style={styles.container}>
@@ -98,14 +101,19 @@ export default function Home({ navigation }) {
               <Marker
                 key={index}
                 coordinate={{ latitude: property.latitude, longitude: property.longitude }}
-                onPress={openModal}
+                onPress={() => openModal(property)}
               />
             ) : null
           ))}
         </MapView>
       </View>
       <PropertyDetails isVisible={isModalVisible} onClose={() => setModalVisible(false)}>
-        <Text>Это модальное окно</Text>
+        {selectedProperty && (
+          <View>
+            <Text>{selectedProperty.title}</Text>
+            <Text>{selectedProperty.description}</Text>
+          </View>
+        )}
       </PropertyDetails>
     </View>
   );
