@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, Image, ScrollView } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import axios from 'axios';
 import { supabase } from '../../lib/supabase';
 import PropertyDetails from '../components/PropertyDetails'; 
+import Carousel from 'react-native-snap-carousel';
 
 const INITIAL_REGION={
   latitude: 51.2239,
@@ -13,6 +14,9 @@ const INITIAL_REGION={
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
 }
+
+
+const UNSPLASH_API_KEY = 'KQ_hTJpIV8p2N7nZnedRZFka5J-Xs1h7Xpg6kyFkBSM';
 
 export default function Home({ navigation }) {
   const [properties, setProperties] = useState([]);
@@ -46,10 +50,12 @@ export default function Home({ navigation }) {
             const { data: geocodeData } = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`);
             if (geocodeData && geocodeData.length > 0) {
               const { lat, lon } = geocodeData[0];
+              const imageUrl = await getRandomImage();
               return {
                 ...property,
                 latitude: parseFloat(lat),
-                longitude: parseFloat(lon)
+                longitude: parseFloat(lon),
+                imageUrl
               };
             }
           } catch (error) {
@@ -63,11 +69,33 @@ export default function Home({ navigation }) {
     }
   };
 
+  const getRandomImage = async () => {
+    try {
+      const response = await axios.get(`https://api.unsplash.com/photos/random?client_id=${UNSPLASH_API_KEY}`);
+      if (response.data && response.data.urls && response.data.urls.regular) {
+        return response.data.urls.regular;
+      } else {
+        console.error('Ошибка получения изображения с Unsplash:', response);
+        return null;
+      }
+    } catch (error) {
+      console.error('Ошибка получения изображения с Unsplash:', error.message);
+      return null;
+    }
+  };
+
   const openModal = (property) => {
     setSelectedProperty(property);
     setModalVisible(true);
   };
-  
+
+  const renderItem = ({ item, index }) => {
+    return (
+      <View style={styles.slide}>
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -109,10 +137,24 @@ export default function Home({ navigation }) {
       </View>
       <PropertyDetails isVisible={isModalVisible} onClose={() => setModalVisible(false)}>
         {selectedProperty && (
-          <View>
-            <Text>{selectedProperty.title}</Text>
-            <Text>{selectedProperty.description}</Text>
-          </View>
+          <>
+            <Carousel
+              data={[...Array(5)].map((_, index) => ({ imageUrl: selectedProperty.imageUrl }))}
+              renderItem={renderItem}
+              sliderWidth={400}
+              itemWidth={300}
+            />
+            <ScrollView>
+              <View style={styles.propertyInfo}>
+                <Text style={styles.propertyTitle}>{selectedProperty.title}</Text>
+                <Text style={styles.propertyDescription}>{selectedProperty.description}</Text>
+              </View>
+              <View style={styles.buttonContainer}>
+                <Button title="Подробнее" onPress={() => {/* Действие при нажатии */}} />
+                <Button title="Позвонить" onPress={() => {/* Действие при нажатии */}} />
+              </View>
+            </ScrollView>
+          </>
         )}
       </PropertyDetails>
     </View>
@@ -121,6 +163,7 @@ export default function Home({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginTop: 30,
   },
   row: {
@@ -151,10 +194,38 @@ const styles = StyleSheet.create({
     borderWidth: 0, 
   },
   mapContainer: {
+    flex: 1,
     width: '100%',
   },
   map: {
+    flex: 1,
+  },
+  slide: {
+    width: 300,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
     width: '100%',
     height: '100%',
+    resizeMode: 'cover',
+    borderRadius: 10,
+  },
+  propertyInfo: {
+    padding: 10,
+  },
+  propertyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  propertyDescription: {
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
   },
 });
