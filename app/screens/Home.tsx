@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, Image, ScrollView, Dimensions } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import axios from 'axios';
 import { supabase } from '../../lib/supabase';
 import PropertyDetails from '../components/PropertyDetails'; 
-import Carousel from 'react-native-snap-carousel';
+import { FlatList } from 'react-native';
 
 const INITIAL_REGION={
   latitude: 51.2239,
@@ -16,7 +16,7 @@ const INITIAL_REGION={
 }
 
 
-const UNSPLASH_API_KEY = 'KQ_hTJpIV8p2N7nZnedRZFka5J-Xs1h7Xpg6kyFkBSM';
+const PEXELS_API_KEY = 'JDq6F6ESipIJtHhxozCLqrF6rHVQBp33S55ajLGewoA31VUdBU2ONmUF';
 
 export default function Home({ navigation }) {
   const [properties, setProperties] = useState([]);
@@ -71,30 +71,26 @@ export default function Home({ navigation }) {
 
   const getRandomImage = async () => {
     try {
-      const response = await axios.get(`https://api.unsplash.com/photos/random?client_id=${UNSPLASH_API_KEY}`);
-      if (response.data && response.data.urls && response.data.urls.regular) {
-        return response.data.urls.regular;
+      const response = await axios.get(`https://api.pexels.com/v1/curated?per_page=5`, {
+        headers: {
+          Authorization: PEXELS_API_KEY
+        }
+      });
+      if (response.data && response.data.photos && response.data.photos.length > 0) {
+        return response.data.photos.map(photo => photo.src.large);
       } else {
-        console.error('Ошибка получения изображения с Unsplash:', response);
-        return null;
+        console.error('Ошибка получения изображений с Pexels:', response);
+        return [];
       }
     } catch (error) {
-      console.error('Ошибка получения изображения с Unsplash:', error.message);
-      return null;
+      console.error('Ошибка получения изображений с Pexels:', error.message);
+      return [];
     }
   };
 
   const openModal = (property) => {
     setSelectedProperty(property);
     setModalVisible(true);
-  };
-
-  const renderItem = ({ item, index }) => {
-    return (
-      <View style={styles.slide}>
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
-      </View>
-    );
   };
 
   return (
@@ -138,12 +134,19 @@ export default function Home({ navigation }) {
       <PropertyDetails isVisible={isModalVisible} onClose={() => setModalVisible(false)}>
         {selectedProperty && (
           <>
-            <Carousel
-              data={[...Array(5)].map((_, index) => ({ imageUrl: selectedProperty.imageUrl }))}
-              renderItem={renderItem}
-              sliderWidth={400}
-              itemWidth={300}
-            />
+            <FlatList
+                style={styles.imageList}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                data={selectedProperty.imageUrl}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.slide}>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </View>
+                )}
+              />
             <ScrollView>
               <View style={styles.propertyInfo}>
                 <Text style={styles.propertyTitle}>{selectedProperty.title}</Text>
@@ -162,6 +165,7 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     marginTop: 30,
@@ -199,17 +203,19 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  },
+  },  
   slide: {
-    width: 300,
-    height: 200,
+    width: Dimensions.get('window').width,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  imageList: {
+    height: 200, 
+  },
+  
   image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: '90%',
+    height: '90%',
     borderRadius: 10,
   },
   propertyInfo: {
