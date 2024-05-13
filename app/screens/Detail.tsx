@@ -1,10 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Detail() {
+export default function Detail({ property }) {
+
+  if (!property) {
+    return (
+      <View style={styles.container}>
+        <Text>Данные о свойстве отсутствуют</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Это экран с подробностями</Text>
+      <Text style={styles.title}>{property.title}</Text>
+      <Text style={styles.description}>{property.description}</Text>
+
     </View>
   );
 }
@@ -14,5 +25,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
   },
 });
