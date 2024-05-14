@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
   }, []);
 
   const fetchProperties = async () => {
-    const { data, error } = await supabase.from('properties').select('property_id, title, description, address, city_id');
+    const { data, error } = await supabase.from('properties').select('*');;
     if (error) {
       console.error('Ошибка получения данных:', error.message);
     } else {
