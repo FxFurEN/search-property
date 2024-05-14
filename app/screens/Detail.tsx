@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Detail({ property }) {
-
+export default function Detail({ route }) {
+  const { property } = route.params;
+  console.log(property);
   if (!property) {
     return (
       <View style={styles.container}>
@@ -15,7 +16,6 @@ export default function Detail({ property }) {
     <View style={styles.container}>
       <Text style={styles.title}>{property.title}</Text>
       <Text style={styles.description}>{property.description}</Text>
-
     </View>
   );
 }

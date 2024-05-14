@@ -105,18 +105,15 @@ const FilterNavigator = () => (
         )
       }}
     />
-    <FilterStack.Screen 
-      name="Подробнее" 
-      component={Detail} 
-    />
   </FilterStack.Navigator>
 );
 
-const DetailNavigator = () => (
+const DetailNavigator = ({ route })  => (
   <FilterStack.Navigator>
     <FilterStack.Screen 
       name="Подробнее" 
-      component={Detail} 
+      component={Detail}
+      initialParams={{ property: route.params.selectedProperty }} 
     />
   </FilterStack.Navigator>
 );

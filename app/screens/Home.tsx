@@ -158,8 +158,7 @@ export default function Home({ navigation }) {
                     titleStyle={styles.modalButtonText} 
                     onPress={() => {
                       navigation.navigate('Detail', { 
-                        screen: 'Detail',
-                        property: selectedProperty
+                        selectedProperty: selectedProperty
                       });
                       setModalVisible(false);
                     }} 
