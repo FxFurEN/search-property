@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
   }, []);
 
   const fetchProperties = async () => {
-    const { data, error } = await supabase.from('properties').select('*');;
+    const { data, error } = await supabase.from('properties').select('*');
     if (error) {
       console.error('Ошибка получения данных:', error.message);
     } else {
@@ -47,14 +47,21 @@ export default function Home({ navigation }) {
             // Формируем строку с адресом, включающую и город
             const fullAddress = `${address}, ${cityName}`;
             // Отправляем запрос на геокодирование
-            const { data: geocodeData } = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`);
-            if (geocodeData && geocodeData.length > 0) {
-              const { lat, lon } = geocodeData[0];
+            const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
+              params: {
+                key: 'XWiw7Vx9Gu72q9uD7bM0GRE3C6NfFAvc',
+                location: fullAddress,
+                format: 'json',
+              },
+            });
+            const { data: geocodeData } = response;
+            if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
+              const { lat, lng } = geocodeData.results[0].locations[0].latLng;
               const imageUrl = await getRandomImage();
               return {
                 ...property,
                 latitude: parseFloat(lat),
-                longitude: parseFloat(lon),
+                longitude: parseFloat(lng),
                 imageUrl
               };
             }
@@ -68,6 +75,7 @@ export default function Home({ navigation }) {
       setProperties(updatedProperties);
     }
   };
+  
 
   const getRandomImage = async () => {
     try {
