@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Dimensions, Image } from 'react-native'; // Используем TouchableOpacity вместо Button
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { TouchableOpacity, Dimensions, Image, View } from 'react-native';
+import { Text, StyleSheet, FlatList } from 'react-native';
 
 export default function Detail({ route }) {
   const { property } = route.params;
@@ -62,6 +62,11 @@ export default function Detail({ route }) {
           <Text style={styles.description}>{property.description}</Text>
         </View>
       </View>
+      <View style={styles.bottomButtonContainer}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
+          <Text style={styles.buttonText}>Позвонить</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -76,6 +81,7 @@ const styles = StyleSheet.create({
   textContainer: {
     paddingHorizontal: 20,
     marginTop: 20,
+    flex: 1, // Добавляем flex: 1, чтобы занимать все доступное пространство
   },
   title: {
     fontSize: 20,
@@ -130,5 +136,12 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  bottomButtonContainer: {
+    position: 'absolute', 
+    bottom: 20, 
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
   },
 });
