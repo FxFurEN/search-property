@@ -1,9 +1,12 @@
 import React from 'react';
-import { Dimensions, Image } from 'react-native';
+import { TouchableOpacity, Dimensions, Image } from 'react-native'; // Используем TouchableOpacity вместо Button
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
 export default function Detail({ route }) {
   const { property } = route.params;
+  const exchangeRate = 0.0023;
+  const priceInDollars = property.price * exchangeRate;
+
   if (!property) {
     return (
       <View style={styles.container}>
@@ -30,9 +33,34 @@ export default function Detail({ route }) {
         />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.description}>Цена: {property.price}</Text>
-        <Text style={styles.title}>{property.title}</Text>
-        <Text style={styles.description}>{property.description}</Text>
+        <View>
+          <Text style={styles.priceTenge}>{property.price} тг.</Text>
+          <Text style={styles.priceDollars}>~ ${priceInDollars.toFixed(2)}</Text>
+        </View>
+        <View>
+          <Text style={[styles.title, {fontWeight: 'bold'}]}>{property.address}</Text>
+          <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
+            <Text style={styles.buttonText}>Показать на карте</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.propertyContainer}>
+          <View style={[styles.propertyBlock, {flex: 1}]}>
+            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>{property.area}</Text>
+            <Text style={[styles.propertyDetail, {color: 'gray'}]}>общая</Text>
+          </View>
+          <View style={[styles.propertyBlock, {flex: 1}]}>
+            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>{property.number_of_rooms} комн.</Text>
+            <Text style={[styles.propertyDetail, {color: 'gray'}]}>квартиры</Text>
+          </View>
+          <View style={[styles.propertyBlock, {flex: 1}]}>
+            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>5</Text>
+            <Text style={[styles.propertyDetail, {color: 'gray'}]}>этаж</Text>
+          </View>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Описание</Text>
+          <Text style={styles.description}>{property.description}</Text>
+        </View>
       </View>
     </View>
   );
@@ -41,8 +69,6 @@ export default function Detail({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 30,
-    alignItems: 'center',
   },
   imageContainer: {
     height: 200,
@@ -53,7 +79,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 10,
   },
   description: {
@@ -68,8 +93,42 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   image: {
-    width: '90%',
+    width: '100%',
     height: '100%',
     borderRadius: 10,
+  },
+  priceTenge: {
+    fontSize: 23,
+    color: '#587cff',
+    marginBottom: 5,
+  },
+  priceDollars: {
+    fontSize: 15,
+    marginBottom: 10,
+    color: 'gray',
+  },
+  propertyContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  propertyBlock: {
+    marginRight: 10,
+  },
+  propertyDetail: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  buttonContainer: {
+    backgroundColor: '#ffdb58',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
