@@ -16,7 +16,8 @@ const INITIAL_REGION={
 }
 
 
-const PEXELS_API_KEY = 'JDq6F6ESipIJtHhxozCLqrF6rHVQBp33S55ajLGewoA31VUdBU2ONmUF';
+const MAPQUEST_API_KEY = process.env.MAPQUEST_API_KEY;
+const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
 
 export default function Home({ navigation }) {
   const [properties, setProperties] = useState([]);
@@ -46,10 +47,9 @@ export default function Home({ navigation }) {
             const cityName = cityData.city_name;
             // Формируем строку с адресом, включающую и город
             const fullAddress = `${address}, ${cityName}`;
-            // Отправляем запрос на геокодирование
             const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
               params: {
-                key: 'XWiw7Vx9Gu72q9uD7bM0GRE3C6NfFAvc',
+                key: MAPQUEST_API_KEY,
                 location: fullAddress,
                 format: 'json',
               },
