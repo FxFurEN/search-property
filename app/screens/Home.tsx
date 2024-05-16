@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert, Image, ScrollView, Dimensions } from 'react-native';
-import { Button, Input } from 'react-native-elements';
+import { Button, Icon, Input } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import axios from 'axios';
@@ -134,7 +134,13 @@ export default function Home({ navigation }) {
                 key={index}
                 coordinate={{ latitude: property.latitude, longitude: property.longitude }}
                 onPress={() => openModal(property)}
-              />
+              >
+                <Icon
+                  name='circle'
+                  type='font-awesome'
+                  color='#191508'
+                />
+              </Marker>
             ) : null
           ))}
         </MapView>
