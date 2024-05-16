@@ -19,60 +19,71 @@ const INITIAL_REGION={
 const MAPQUEST_API_KEY = process.env.MAPQUEST_API_KEY;
 const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
   const [properties, setProperties] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
-
+  const { selectedCity, selectedPropertyType } = route.params;
   useEffect(() => {
     fetchProperties();
-  }, []);
+    console.log(route.params)
+  }, [route.params]); 
+
 
   const fetchProperties = async () => {
-    const { data, error } = await supabase.from('properties').select('*');
-    if (error) {
+    try {
+      let { data, error } = await supabase.from('properties').select('*');
+      if (error) {
+        console.error('Ошибка получения данных:', error.message);
+      } else {
+        // Применяем фильтрацию, если параметры фильтрации были переданы
+        if (selectedCity && selectedPropertyType) {
+          data = data.filter(property => property.city_id === selectedCity && property.type_id === selectedPropertyType);
+        }
+
+        const updatedProperties = await Promise.all(
+          data.map(async (property) => {
+            try {
+              // Получаем адрес и город из данных
+              const { address, city_id } = property;
+              // Получаем имя города из базы данных
+              const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
+              if (cityError) {
+                console.error('Ошибка получения данных о городе:', cityError.message);
+                return property;
+              }
+              const cityName = cityData.city_name;
+              // Формируем строку с адресом, включающую и город
+              const fullAddress = `${address}, ${cityName}`;
+              const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
+                params: {
+                  key: MAPQUEST_API_KEY,
+                  location: fullAddress,
+                  format: 'json',
+                },
+              });
+              const { data: geocodeData } = response;
+              if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
+                const { lat, lng } = geocodeData.results[0].locations[0].latLng;
+                const imageUrl = await getRandomImage();
+                return {
+                  ...property,
+                  latitude: parseFloat(lat),
+                  longitude: parseFloat(lng),
+                  imageUrl
+                };
+              }
+            } catch (error) {
+              console.error('Ошибка при обновлении координат:', error.message);
+            }
+            // Возвращаем исходное свойство в случае ошибки
+            return property;
+          })
+        );
+        setProperties(updatedProperties);
+      }
+    } catch (error) {
       console.error('Ошибка получения данных:', error.message);
-    } else {
-      const updatedProperties = await Promise.all(
-        data.map(async (property) => {
-          try {
-            // Получаем адрес и город из данных
-            const { address, city_id } = property;
-            // Получаем имя города из базы данных
-            const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
-            if (cityError) {
-              console.error('Ошибка получения данных о городе:', cityError.message);
-              return property;
-            }
-            const cityName = cityData.city_name;
-            // Формируем строку с адресом, включающую и город
-            const fullAddress = `${address}, ${cityName}`;
-            const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
-              params: {
-                key: MAPQUEST_API_KEY,
-                location: fullAddress,
-                format: 'json',
-              },
-            });
-            const { data: geocodeData } = response;
-            if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
-              const { lat, lng } = geocodeData.results[0].locations[0].latLng;
-              const imageUrl = await getRandomImage();
-              return {
-                ...property,
-                latitude: parseFloat(lat),
-                longitude: parseFloat(lng),
-                imageUrl
-              };
-            }
-          } catch (error) {
-            console.error('Ошибка при обновлении координат:', error.message);
-          }
-          // Возвращаем исходное свойство в случае ошибки
-          return property;
-        })
-      );
-      setProperties(updatedProperties);
     }
   };
   
@@ -110,7 +121,6 @@ export default function Home({ navigation }) {
           buttonStyle={styles.searchButton}
           titleStyle={styles.searchButtonText} 
           containerStyle={{width: '70%'}}
-          onPress={() => navigation.navigate('Location', { screen: 'Location' })}
         />
         <Button
           icon={<Ionicons name="options-outline" size={24} color="black" />} 

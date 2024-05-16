@@ -62,7 +62,7 @@ export default function App() {
   );
 }
 
-const TabNavigator = () => (
+const TabNavigator = ({ route }) => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -83,7 +83,14 @@ const TabNavigator = () => (
       headerShown: false
     })}
   >
-    <Tab.Screen name="Поиск" component={Home} />
+    <Tab.Screen 
+      name="Поиск" 
+      component={Home} 
+      initialParams={{ 
+        city: route.params?.selectedCity, 
+        propertyType: route.params?.selectedPropertyType 
+      }}  
+    />
     <Tab.Screen name="Профиль" component={Profile} />
     <Tab.Screen name="Новости" component={News} />
   </Tab.Navigator>

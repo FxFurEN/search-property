@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'r
 import { Slider, ButtonGroup } from 'react-native-elements';
 import { supabase } from '../../lib/supabase';
 
-export default function Filter() {
+export default function Filter({ navigation }) {
   const [cities, setCities] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [selectedCity, setSelectedCity] = useState('');
@@ -61,6 +61,16 @@ export default function Filter() {
     setShowCityList(true); // Показываем список городов при вводе текста
   };
 
+  const handleSearch = () => {
+    navigation.navigate('TabNavigator', {
+      screen: 'Поиск',
+      selectedCity: selectedCity,
+      selectedPropertyType: selectedPropertyType,
+    });
+  };
+  
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Фильтр</Text>
@@ -103,7 +113,7 @@ export default function Filter() {
         {/* Добавьте здесь компонент Slider */}
       </View>
       <View style={styles.bottomButtonContainer}>
-        <TouchableOpacity style={[styles.buttonContainer, {backgroundColor: '#ffdb58'}]} onPress={() => {}}>
+        <TouchableOpacity style={[styles.buttonContainer, {backgroundColor: '#ffdb58'}]} onPress={handleSearch}>
           <Text style={[styles.buttonText, {textAlign: 'center'}]}>Поиск</Text>
         </TouchableOpacity>
       </View>
