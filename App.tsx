@@ -17,7 +17,6 @@ import News from './app/screens/News';
 import Filter from './app/screens/Filter'; 
 import { Button } from 'react-native-elements';
 import Detail from './app/screens/Detail';
-import Location from './app/screens/Location';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,7 +57,6 @@ export default function App() {
         )}
          <Stack.Screen name="Filter" component={FilterNavigator} /> 
          <Stack.Screen name="Detail" component={DetailNavigator} /> 
-         <Stack.Screen name="Location" component={LocationNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -116,24 +114,6 @@ const DetailNavigator = ({ route })  => (
       name="Подробнее" 
       component={Detail}
       initialParams={{ property: route.params.selectedProperty }} 
-    />
-  </FilterStack.Navigator>
-);
-
-const LocationNavigator = () => (
-  <FilterStack.Navigator>
-    <FilterStack.Screen 
-      name="Местоположение" 
-      component={Location} 
-      options={{
-        headerRight: () => (
-           <Button 
-            title={'Сбросить'} 
-            titleStyle={{ color: 'black' }}
-            buttonStyle={{backgroundColor: 'transparent', borderWidth: 0, }}
-          />
-        )
-      }}
     />
   </FilterStack.Navigator>
 );
