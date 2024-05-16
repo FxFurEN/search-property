@@ -104,13 +104,13 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Input
-          placeholder="Поиск"
-          leftIcon={<Ionicons name="location-outline" size={24} color="black" />} 
-          inputContainerStyle={styles.inputContainer} 
-          inputStyle={styles.input} 
-          autoCapitalize={'none'}
-          containerStyle={{width: '70%' }}
+        <Button
+          icon={<Ionicons name="location-outline" size={24} color="black" />} 
+          title="Поиск"
+          buttonStyle={styles.searchButton}
+          titleStyle={styles.searchButtonText} 
+          containerStyle={{width: '70%'}}
+          onPress={() => navigation.navigate('Location', { screen: 'Location' })}
         />
         <Button
           icon={<Ionicons name="options-outline" size={24} color="black" />} 
@@ -198,18 +198,22 @@ const styles = StyleSheet.create({
     height: 60, 
     flexDirection: 'row', 
   },
-  inputContainer: { 
-    marginTop: 25,
+  searchButton: {
+    marginLeft: 10,
     height: '70%',
     marginRight: 10, 
     borderRadius: 10, 
-    borderWidth: 1, 
+    borderWidth: 2, 
     borderColor: 'gray', 
+    backgroundColor: 'transparent',
     paddingLeft: 10, 
     paddingRight: 10,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start', 
   },
-  input: {
-    marginLeft: 10, 
+  searchButtonText: {
+    color: 'black',
+    textAlign: 'left',
   },
   button: {
     borderRadius: 10,
