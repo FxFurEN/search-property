@@ -15,6 +15,9 @@ export default function Detail({ route }) {
     );
   }
 
+  // Определяем, является ли недвижимость типом "Гараж"
+  const isGarage = property.type_id === 3;
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -23,7 +26,7 @@ export default function Detail({ route }) {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          data={property.imageUrl}
+          data={property.photos}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.slide}>
@@ -38,24 +41,78 @@ export default function Detail({ route }) {
           <Text style={styles.priceDollars}>~ ${priceInDollars.toFixed(2)}</Text>
         </View>
         <View>
-          <Text style={[styles.title, {fontWeight: 'bold'}]}>{property.address}</Text>
+          <Text style={[styles.title, {fontWeight: 'bold'}]}>{property.title}</Text>
           <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
             <Text style={styles.buttonText}>Показать на карте</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.propertyContainer}>
-          <View style={[styles.propertyBlock, {flex: 1}]}>
-            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>{property.area}</Text>
-            <Text style={[styles.propertyDetail, {color: 'gray'}]}>общая</Text>
-          </View>
-          <View style={[styles.propertyBlock, {flex: 1}]}>
-            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>{property.number_of_rooms} комн.</Text>
-            <Text style={[styles.propertyDetail, {color: 'gray'}]}>квартиры</Text>
-          </View>
-          <View style={[styles.propertyBlock, {flex: 1}]}>
-            <Text style={[styles.propertyDetail, {fontWeight: 'bold'}]}>5</Text>
-            <Text style={[styles.propertyDetail, {color: 'gray'}]}>этаж</Text>
-          </View>
+          {/* Отображаем информацию о площади, количестве комнат и этаже для квартир */}
+          {property.category_id === 1 && !isGarage && (
+            <>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.area} м²</Text>
+                <Text style={styles.propertyDetail}>Общая площадь</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.number_of_rooms} комн.</Text>
+                <Text style={styles.propertyDetail}>Количество комнат</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.floor_number} из {property.number_of_floors}</Text>
+                <Text style={styles.propertyDetail}>Этаж</Text>
+              </View>
+            </>
+          )}
+          {/* Отображаем информацию о площади участка и строения для частных домов */}
+          {property.category_id === 2 && !isGarage && (
+            <>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.land_area} сот.</Text>
+                <Text style={styles.propertyDetail}>Площадь участка</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.building_area} м²</Text>
+                <Text style={styles.propertyDetail}>Площадь строения</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.number_of_rooms}</Text>
+                <Text style={styles.propertyDetail}>Кол-во жилый комнат</Text>
+              </View>
+            </>
+          )}
+          {/* Отображаем информацию о площади склада для складов */}
+          {property.category_id === 4 || property.category_id === 5 && (
+            <View style={styles.propertyBlock}>
+              <Text style={styles.propertyDetail}>{property.warehouse_area} м²</Text>
+              <Text style={styles.propertyDetail}>Площадь склада</Text>
+            </View>
+          )}
+          {property.category_id === 3 && (
+            <>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.number_of_floors}</Text>
+                <Text style={styles.propertyDetail}>Этаж</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.floor_number}</Text>
+                <Text style={styles.propertyDetail}>Кол-во комнат</Text>
+              </View>
+              <View style={styles.propertyBlock}>
+                <Text style={styles.propertyDetail}>{property.building_area} м²</Text>
+                <Text style={styles.propertyDetail}>Площадь строения</Text>
+              </View>
+            </>
+            
+            
+          )}
+          {/* Отображаем информацию о количестве парковочных мест для гаражей и машиномест */}
+          {(property.category_id === 6 || property.category_id === 7) && (
+            <View style={styles.propertyBlock}>
+              <Text style={styles.propertyDetail}>{property.parking_spaces}</Text>
+              <Text style={styles.propertyDetail}>Парковочные места</Text>
+            </View>
+          )}
         </View>
         <View>
           <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Описание</Text>
@@ -81,7 +138,7 @@ const styles = StyleSheet.create({
   textContainer: {
     paddingHorizontal: 20,
     marginTop: 20,
-    flex: 1, // Добавляем flex: 1, чтобы занимать все доступное пространство
+    flex: 1,
   },
   title: {
     fontSize: 20,
@@ -115,13 +172,14 @@ const styles = StyleSheet.create({
   },
   propertyContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
     marginBottom: 20,
     marginTop: 20,
   },
   propertyBlock: {
-    marginRight: 10,
+    width: '48%',
+    marginBottom: 10,
   },
   propertyDetail: {
     fontSize: 16,
