@@ -16,6 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import News from './app/screens/News';
 import Filter from './app/screens/Filter'; 
 import { Button } from 'react-native-elements';
+import Detail from './app/screens/Detail';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,12 +56,13 @@ export default function App() {
           </>
         )}
          <Stack.Screen name="Filter" component={FilterNavigator} /> 
+         <Stack.Screen name="Detail" component={DetailNavigator} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-const TabNavigator = () => (
+const TabNavigator = ({ route }) => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -81,7 +83,14 @@ const TabNavigator = () => (
       headerShown: false
     })}
   >
-    <Tab.Screen name="Поиск" component={Home} />
+    <Tab.Screen 
+      name="Поиск" 
+      component={Home} 
+      initialParams={{ 
+        city: route.params?.selectedCity, 
+        propertyType: route.params?.selectedPropertyType 
+      }}  
+    />
     <Tab.Screen name="Профиль" component={Profile} />
     <Tab.Screen name="Новости" component={News} />
   </Tab.Navigator>
@@ -102,6 +111,16 @@ const FilterNavigator = () => (
           />
         )
       }}
+    />
+  </FilterStack.Navigator>
+);
+
+const DetailNavigator = ({ route })  => (
+  <FilterStack.Navigator>
+    <FilterStack.Screen 
+      name="Подробнее" 
+      component={Detail}
+      initialParams={{ property: route.params.selectedProperty }} 
     />
   </FilterStack.Navigator>
 );
