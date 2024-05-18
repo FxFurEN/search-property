@@ -4,8 +4,8 @@ import { Slider, ButtonGroup } from 'react-native-elements';
 import { supabase } from '../../lib/supabase';
 
 export default function Filter({ navigation }) {
-  const [cities, setCities] = useState([]);
-  const [propertyTypes, setPropertyTypes] = useState([]);
+  const [cities, setCities] = useState<{ city_id: number; city_name: string; }[]>([]);
+  const [propertyTypes, setPropertyTypes] = useState<{ type_id: number; type_name: string; }[]>([]);
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedPropertyType, setSelectedPropertyType] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000000]); // Диапазон цен по умолчанию
@@ -20,54 +20,71 @@ export default function Filter({ navigation }) {
 
   const fetchCities = async () => {
     try {
-      const { data, error } = await supabase.from('cities').select('city_name');
+      const { data, error } = await supabase.from('cities').select('city_name, city_id');
       if (error) {
         console.error('Ошибка получения городов:', error.message);
       } else {
-        setCities(data.map(city => city.city_name));
+        setCities(data.map(city => ({ city_id: city.city_id, city_name: city.city_name })));
       }
     } catch (error) {
       console.error('Ошибка при загрузке городов:', error.message);
     }
   };
-
+  
   const fetchPropertyTypes = async () => {
     try {
-      const { data, error } = await supabase.from('propertytypes').select('type_name');
+      const { data, error } = await supabase.from('propertytypes').select('type_name, type_id');
       if (error) {
         console.error('Ошибка получения типов недвижимости:', error.message);
       } else {
-        setPropertyTypes(data.map(type => type.type_name));
+        setPropertyTypes(data.map(type => ({ type_id: type.type_id, type_name: type.type_name })));
       }
     } catch (error) {
       console.error('Ошибка при загрузке типов недвижимости:', error.message);
     }
   };
-
-  const propertyTypeButtons = propertyTypes.map(type => type.charAt(0).toUpperCase() + type.slice(1));
+  
 
   // Функция для выбора города из списка и установки его в поле ввода
-  const selectCity = (city) => {
-    setSelectedCity(city);
-    setSearchText(city); // Устанавливаем выбранный город в поле ввода
+  const selectCity = (city) => {  
+    setSelectedCity(city.city_id);
+    setSearchText(city.city_name);
     setShowCityList(false); // Скрываем список городов
   };
 
   // Функция для фильтрации городов в зависимости от введенного текста
   const filterCities = (text) => {
     setSearchText(text);
-    const filtered = cities.filter(city => city.toLowerCase().includes(text.toLowerCase()));
+    const filtered = cities.filter(city => city.city_name.toLowerCase().includes(text.toLowerCase()));
     setFilteredCities(filtered);
-    setShowCityList(true); // Показываем список городов при вводе текста
+    setShowCityList(true); // Show the city list when text is entered
   };
 
-  const handleSearch = () => {
-    navigation.navigate('TabNavigator', {
-      screen: 'Поиск',
-      selectedCity: selectedCity,
-      selectedPropertyType: selectedPropertyType,
-    });
+  // Функция для выбора типа недвижимости и установки его
+  const selectPropertyType = (index) => {  
+    setSelectedPropertyType(propertyTypes[index].type_name); // Set the selected property type name
   };
+
+  // Возвращаемое значение из map должно содержать только имя типа недвижимости, а не всю информацию о типе недвижимости
+  const propertyTypeButtons = propertyTypes.map(type => type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1));
+
+
+  const getPropertyTypeIdByName = (typeName) => {
+    const propertyType = propertyTypes.find(type => type.type_name === typeName);
+    return propertyType ? propertyType.type_id : null;
+  };
+
+
+  const handleSearch = () => {
+  const selectedPropertyTypeId = getPropertyTypeIdByName(selectedPropertyType); // Get the ID by name
+  navigation.navigate('TabNavigator', {
+    screen: 'Поиск',
+    params:{
+      selectedCity: selectedCity,
+      selectedPropertyType: selectedPropertyTypeId, // Pass the ID
+    }
+  });
+};
   
   
 
@@ -87,10 +104,10 @@ export default function Filter({ navigation }) {
             data={filteredCities}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => selectCity(item)} style={styles.buttonContainer}>
-                <Text style={styles.buttonText}>{item}</Text>
+                <Text style={styles.buttonText}>{item.city_name}</Text>
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item}
+            keyExtractor={(item) => item.city_id.toString()} // Ensure unique keys
           />
         )}
       </View>
@@ -99,7 +116,7 @@ export default function Filter({ navigation }) {
         <ButtonGroup
           buttons={propertyTypeButtons}
           selectedIndex={propertyTypeButtons.indexOf(selectedPropertyType)}
-          onPress={(selectedIndex) => setSelectedPropertyType(propertyTypes[selectedIndex])}
+          onPress={selectPropertyType} // Pass the selectPropertyType function
           containerStyle={{ height: 40, borderWidth: 0 }}
           buttonStyle={{ backgroundColor: '#ffffff', borderRadius: 10 }}
           selectedButtonStyle={{ backgroundColor: '#ffdb58' }}

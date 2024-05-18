@@ -24,67 +24,159 @@ export default function Home({ navigation, route }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const { selectedCity, selectedPropertyType } = route.params;
+
   useEffect(() => {
-    fetchProperties();
-    console.log(route.params)
-  }, [route.params]); 
-
-
-  const fetchProperties = async () => {
-    try {
-      let { data, error } = await supabase.from('properties').select('*');
-      if (error) {
-        console.error('Ошибка получения данных:', error.message);
-      } else {
-        // Применяем фильтрацию, если параметры фильтрации были переданы
-        if (selectedCity && selectedPropertyType) {
-          data = data.filter(property => property.city_id === selectedCity && property.type_id === selectedPropertyType);
-        }
-
-        const updatedProperties = await Promise.all(
-          data.map(async (property) => {
-            try {
-              // Получаем адрес и город из данных
-              const { address, city_id } = property;
-              // Получаем имя города из базы данных
-              const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
-              if (cityError) {
-                console.error('Ошибка получения данных о городе:', cityError.message);
-                return property;
-              }
-              const cityName = cityData.city_name;
-              // Формируем строку с адресом, включающую и город
-              const fullAddress = `${address}, ${cityName}`;
-              const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
-                params: {
-                  key: MAPQUEST_API_KEY,
-                  location: fullAddress,
-                  format: 'json',
-                },
-              });
-              const { data: geocodeData } = response;
-              if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
-                const { lat, lng } = geocodeData.results[0].locations[0].latLng;
-                const imageUrl = await getRandomImage();
-                return {
-                  ...property,
-                  latitude: parseFloat(lat),
-                  longitude: parseFloat(lng),
-                  imageUrl
-                };
-              }
-            } catch (error) {
-              console.error('Ошибка при обновлении координат:', error.message);
-            }
-            // Возвращаем исходное свойство в случае ошибки
-            return property;
-          })
-        );
-        setProperties(updatedProperties);
-      }
-    } catch (error) {
-      console.error('Ошибка получения данных:', error.message);
+    console.log('selectedCity:', selectedCity);
+    console.log('selectedPropertyType:', selectedPropertyType);
+    if (selectedCity && !selectedPropertyType) {
+      filterByCity();
+    } else if (!selectedCity && selectedPropertyType) {
+      filterByPropertyType();
+    } else if (selectedCity && selectedPropertyType) {
+      filterByCityAndPropertyType();
     }
+  }, [selectedCity, selectedPropertyType]); 
+
+
+  const filterByCity = async () => {
+    let query = supabase.from('properties').select('*').eq('city_id', selectedCity);;
+    const { data, error } = await query;
+  
+    if (error) {
+      console.error('Ошибка получения данных:', error.message);
+      return;
+    }
+  
+    const updatedProperties = await Promise.all(
+      data.map(async (property) => {
+        try {
+          const { address, city_id } = property;
+          const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
+          if (cityError) {
+            console.error('Ошибка получения данных о городе:', cityError.message);
+            return property;
+          }
+          const cityName = cityData.city_name;
+          const fullAddress = `${address}, ${cityName}`;
+          const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
+            params: {
+              key: MAPQUEST_API_KEY,
+              location: fullAddress,
+              format: 'json',
+            },
+          });
+          const { data: geocodeData } = response;
+          if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
+            const { lat, lng } = geocodeData.results[0].locations[0].latLng;
+            const imageUrl = await getRandomImage();
+            return {
+              ...property,
+              latitude: parseFloat(lat),
+              longitude: parseFloat(lng),
+              imageUrl
+            };
+          }
+        } catch (error) {
+          console.error('Ошибка при обновлении координат:', error.message);
+        }
+        return property;
+      })
+    );
+    setProperties(updatedProperties);
+  };
+  
+  const filterByPropertyType = async () => {
+    let query = supabase.from('properties').select('*').eq('type_id', selectedPropertyType);;
+    const { data, error } = await query;
+  
+    if (error) {
+      console.error('Ошибка получения данных:', error.message);
+      return;
+    }
+  
+    const updatedProperties = await Promise.all(
+      data.map(async (property) => {
+        try {
+          const { address, city_id } = property;
+          const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
+          if (cityError) {
+            console.error('Ошибка получения данных о городе:', cityError.message);
+            return property;
+          }
+          const cityName = cityData.city_name;
+          const fullAddress = `${address}, ${cityName}`;
+          const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
+            params: {
+              key: MAPQUEST_API_KEY,
+              location: fullAddress,
+              format: 'json',
+            },
+          });
+          const { data: geocodeData } = response;
+          if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
+            const { lat, lng } = geocodeData.results[0].locations[0].latLng;
+            const imageUrl = await getRandomImage();
+            return {
+              ...property,
+              latitude: parseFloat(lat),
+              longitude: parseFloat(lng),
+              imageUrl
+            };
+          }
+        } catch (error) {
+          console.error('Ошибка при обновлении координат:', error.message);
+        }
+        return property;
+      })
+    );
+    setProperties(updatedProperties);
+  };
+  
+  const filterByCityAndPropertyType = async () => {
+    let query = supabase.from('properties').select('*').eq('city_id', selectedCity).eq('type_id', selectedPropertyType);;
+    const { data, error } = await query;
+  
+    if (error) {
+      console.error('Ошибка получения данных:', error.message);
+      return;
+    }
+  
+    const updatedProperties = await Promise.all(
+      data.map(async (property) => {
+        try {
+          const { address, city_id } = property;
+          const { data: cityData, error: cityError } = await supabase.from('cities').select('city_name').eq('city_id', city_id).single();
+          if (cityError) {
+            console.error('Ошибка получения данных о городе:', cityError.message);
+            return property;
+          }
+          const cityName = cityData.city_name;
+          const fullAddress = `${address}, ${cityName}`;
+          const response = await axios.get('https://www.mapquestapi.com/geocoding/v1/address', {
+            params: {
+              key: MAPQUEST_API_KEY,
+              location: fullAddress,
+              format: 'json',
+            },
+          });
+          const { data: geocodeData } = response;
+          if (geocodeData && geocodeData.results && geocodeData.results.length > 0) {
+            const { lat, lng } = geocodeData.results[0].locations[0].latLng;
+            const imageUrl = await getRandomImage();
+            return {
+              ...property,
+              latitude: parseFloat(lat),
+              longitude: parseFloat(lng),
+              imageUrl
+            };
+          }
+        } catch (error) {
+          console.error('Ошибка при обновлении координат:', error.message);
+        }
+        return property;
+      })
+    );
+    setProperties(updatedProperties);
   };
   
 
