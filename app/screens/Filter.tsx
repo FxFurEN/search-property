@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Slider, ButtonGroup } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Импортируем AsyncStorage
 import { supabase } from '../../lib/supabase';
 
 export default function Filter({ navigation }) {
-  const [cities, setCities] = useState<{ city_id: number; city_name: string; }[]>([]);
-  const [propertyTypes, setPropertyTypes] = useState<{ type_id: number; type_name: string; }[]>([]);
+  const [cities, setCities] = useState([]);
+  const [propertyTypes, setPropertyTypes] = useState([]);
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedPropertyType, setSelectedPropertyType] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 1000000]); // Диапазон цен по умолчанию
+  const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [searchText, setSearchText] = useState('');
   const [filteredCities, setFilteredCities] = useState([]);
-  const [showCityList, setShowCityList] = useState(false); // Состояние для отображения списка городов
+  const [showCityList, setShowCityList] = useState(false);
 
   useEffect(() => {
     fetchCities();
@@ -44,49 +45,73 @@ export default function Filter({ navigation }) {
     }
   };
   
-
-  // Функция для выбора города из списка и установки его в поле ввода
   const selectCity = (city) => {  
     setSelectedCity(city.city_id);
     setSearchText(city.city_name);
-    setShowCityList(false); // Скрываем список городов
+    setShowCityList(false);
   };
 
-  // Функция для фильтрации городов в зависимости от введенного текста
   const filterCities = (text) => {
     setSearchText(text);
     const filtered = cities.filter(city => city.city_name.toLowerCase().includes(text.toLowerCase()));
     setFilteredCities(filtered);
-    setShowCityList(true); // Show the city list when text is entered
+    setShowCityList(true);
   };
 
-  // Функция для выбора типа недвижимости и установки его
   const selectPropertyType = (index) => {  
-    setSelectedPropertyType(propertyTypes[index].type_name); // Set the selected property type name
+    setSelectedPropertyType(propertyTypes[index].type_name);
   };
 
-  // Возвращаемое значение из map должно содержать только имя типа недвижимости, а не всю информацию о типе недвижимости
   const propertyTypeButtons = propertyTypes.map(type => type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1));
-
 
   const getPropertyTypeIdByName = (typeName) => {
     const propertyType = propertyTypes.find(type => type.type_name === typeName);
     return propertyType ? propertyType.type_id : null;
   };
 
-
   const handleSearch = () => {
-  const selectedPropertyTypeId = getPropertyTypeIdByName(selectedPropertyType); // Get the ID by name
-  navigation.navigate('TabNavigator', {
-    screen: 'Поиск',
-    params:{
-      selectedCity: selectedCity,
-      selectedPropertyType: selectedPropertyTypeId, // Pass the ID
+    const selectedPropertyTypeId = getPropertyTypeIdByName(selectedPropertyType);
+    navigation.navigate('TabNavigator', {
+      screen: 'Поиск',
+      params:{
+        selectedCity: selectedCity,
+        selectedPropertyType: selectedPropertyTypeId,
+      }
+    });
+  };
+
+  // Функция для сохранения выбранных фильтров в AsyncStorage
+  const saveFilters = async () => {
+    try {
+      await AsyncStorage.setItem('selectedFilters', JSON.stringify({ selectedCity, selectedPropertyType, priceRange, searchText }));
+    } catch (error) {
+      console.error('Ошибка сохранения фильтров:', error.message);
     }
-  });
-};
-  
-  
+  };
+
+  // Функция для загрузки выбранных фильтров из AsyncStorage
+  const loadFilters = async () => {
+    try {
+      const savedFilters = await AsyncStorage.getItem('selectedFilters');
+      if (savedFilters !== null) {
+        const { selectedCity, selectedPropertyType, priceRange, searchText } = JSON.parse(savedFilters);
+        setSelectedCity(selectedCity);
+        setSelectedPropertyType(selectedPropertyType);
+        setPriceRange(priceRange);
+        setSearchText(searchText);
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки фильтров:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    loadFilters(); // Вызываем loadFilters при загрузке компонента
+  }, []);
+
+  useEffect(() => {
+    saveFilters(); // Вызываем saveFilters при изменении выбранных фильтров
+  }, [selectedCity, selectedPropertyType, priceRange, searchText]);
 
   return (
     <View style={styles.container}>
@@ -107,7 +132,7 @@ export default function Filter({ navigation }) {
                 <Text style={styles.buttonText}>{item.city_name}</Text>
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item.city_id.toString()} // Ensure unique keys
+            keyExtractor={(item) => item.city_id.toString()}
           />
         )}
       </View>
@@ -116,18 +141,13 @@ export default function Filter({ navigation }) {
         <ButtonGroup
           buttons={propertyTypeButtons}
           selectedIndex={propertyTypeButtons.indexOf(selectedPropertyType)}
-          onPress={selectPropertyType} // Pass the selectPropertyType function
+          onPress={selectPropertyType}
           containerStyle={{ height: 40, borderWidth: 0 }}
           buttonStyle={{ backgroundColor: '#ffffff', borderRadius: 10 }}
           selectedButtonStyle={{ backgroundColor: '#ffdb58' }}
           textStyle={{ color: 'black' }}
           selectedTextStyle={{ color: 'black' }}
         />
-      </View>
-      <View style={styles.filter}>
-        <Text style={styles.label}>Цена:</Text>
-        <Text>{priceRange[0]} тг - {priceRange[1]} тг</Text>
-        {/* Добавьте здесь компонент Slider */}
       </View>
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity style={[styles.buttonContainer, {backgroundColor: '#ffdb58'}]} onPress={handleSearch}>
