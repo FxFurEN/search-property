@@ -19,6 +19,13 @@ export default function Filter({ navigation }) {
     fetchPropertyTypes();
   }, []);
 
+  useEffect(() => {
+    if (resetFilters) {
+      resetFilters();
+      navigation.setParams({ resetFilters: false }); // Сбрасываем параметр
+    }
+  }, [resetFilters, navigation]);
+
   const fetchCities = async () => {
     try {
       const { data, error } = await supabase.from('cities').select('city_name, city_id');
@@ -56,6 +63,13 @@ export default function Filter({ navigation }) {
     const filtered = cities.filter(city => city.city_name.toLowerCase().includes(text.toLowerCase()));
     setFilteredCities(filtered);
     setShowCityList(true);
+  };
+
+  const resetFilters = () => {
+    setSelectedCity(null);
+    setSelectedPropertyType(null);
+    setPriceRange([0, 1000000]);
+    setSearchText('');
   };
 
   const selectPropertyType = (index) => {  
