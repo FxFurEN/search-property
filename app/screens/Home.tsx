@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Alert, Image, ScrollView, Dimensions, Linking } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -251,6 +251,12 @@ export default function Home({ navigation, route }) {
     setModalVisible(true);
   };
 
+  
+  const handleCall = () => {
+    const phoneNumber = '+1234567890'; 
+    Linking.openURL(`tel:${phoneNumber}`);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -326,7 +332,7 @@ export default function Home({ navigation, route }) {
                       setModalVisible(false);
                     }} 
                   />
-                  <Button title="Позвонить" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={() => {/* Действие при нажатии */}} />
+                  <Button title="Позвонить" buttonStyle={[styles.button, styles.modalButton]} titleStyle={styles.modalButtonText} onPress={handleCall} />
               </View>
             </ScrollView>
           </>

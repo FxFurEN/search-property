@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Dimensions, Image, View } from 'react-native';
+import { TouchableOpacity, Dimensions, Image, View, Linking } from 'react-native';
 import { Text, StyleSheet, FlatList } from 'react-native';
 
 export default function Detail({ route }) {
@@ -17,6 +17,12 @@ export default function Detail({ route }) {
 
   // Определяем, является ли недвижимость типом "Гараж"
   const isGarage = property.type_id === 3;
+
+    // Функция для обработки нажатия на кнопку "Позвонить"
+    const handleCall = () => {
+      const phoneNumber = '+1234567890'; // Замените на реальный номер телефона
+      Linking.openURL(`tel:${phoneNumber}`);
+    };
 
   return (
     <View style={styles.container}>
@@ -117,7 +123,7 @@ export default function Detail({ route }) {
         </View>
       </View>
       <View style={styles.bottomButtonContainer}>
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={handleCall}>
           <Text style={styles.buttonText}>Позвонить</Text>
         </TouchableOpacity>
       </View>
