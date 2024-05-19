@@ -7,6 +7,10 @@ import { supabase } from '../../lib/supabase'
 export default function Profile() {
     const [session, setSession] = useState<Session | null>(null)
 
+    const signOut = async () => {
+      await supabase.auth.signOut();
+    };
+
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
           setSession(session)
@@ -37,6 +41,9 @@ export default function Profile() {
       </View>
       <View style={styles.verticallySpaced}>
         <Button title="Сохранить" buttonStyle={styles.Button} titleStyle={styles.ButtonText}/>
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Выйти" onPress={signOut}buttonStyle={styles.Button} titleStyle={styles.ButtonText}/>
       </View>
     </View>
   )

@@ -22,10 +22,6 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const FilterStack = createStackNavigator();
 
-const signOut = async () => {
-  await supabase.auth.signOut();
-};
-
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
 
