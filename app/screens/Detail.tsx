@@ -26,7 +26,7 @@ export default function Detail({ route }) {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          data={property.photos}
+          data={property.imageUrl}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.slide}>
@@ -42,9 +42,6 @@ export default function Detail({ route }) {
         </View>
         <View>
           <Text style={[styles.title, {fontWeight: 'bold'}]}>{property.title}</Text>
-          <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
-            <Text style={styles.buttonText}>Показать на карте</Text>
-          </TouchableOpacity>
         </View>
         <View style={styles.propertyContainer}>
           {/* Отображаем информацию о площади, количестве комнат и этаже для квартир */}

@@ -229,7 +229,7 @@ export default function Home({ navigation, route }) {
 
   const getRandomImage = async () => {
     try {
-      const response = await axios.get(`https://api.pexels.com/v1/curated?per_page=5`, {
+      const response = await axios.get(`https://api.pexels.com/v1/search?query=$property&per_page=5`, {
         headers: {
           Authorization: PEXELS_API_KEY
         }
