@@ -24,17 +24,19 @@ export default function Profile() {
           label="Почта"
           autoCapitalize={'none'}
           value={session?.user.email}
+          disabled
         />
       </View>
       <View style={styles.verticallySpaced}>
         <Input
           label="Телефон"
           autoCapitalize={'none'}
-          value={session?.user.phone}
+          value={"+7 **********"}
+          disabled
         />
       </View>
       <View style={styles.verticallySpaced}>
-        <Button title="Сохранить" />
+        <Button title="Сохранить" buttonStyle={styles.Button} titleStyle={styles.ButtonText}/>
       </View>
     </View>
   )
@@ -51,6 +53,12 @@ const styles = StyleSheet.create({
       paddingBottom: 4,
       alignSelf: 'stretch',
     },
+    Button: {
+      backgroundColor: '#ffdb58',
+    },
+    ButtonText: {
+      color: 'black',
+    },  
     mt20: {
       marginTop: 20,
     },

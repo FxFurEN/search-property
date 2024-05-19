@@ -97,23 +97,33 @@ const TabNavigator = ({ route }) => (
 );
 
 
-const FilterNavigator = () => (
-  <FilterStack.Navigator>
-    <FilterStack.Screen 
-      name="Фильтры" 
-      component={Filter} 
-      options={{
-        headerRight: () => (
-           <Button 
-            title={'Сбросить'} 
-            titleStyle={{ color: 'black' }}
-            buttonStyle={{backgroundColor: 'transparent', borderWidth: 0, }}
-          />
-        )
-      }}
-    />
-  </FilterStack.Navigator>
-);
+// В компоненте FilterNavigator
+const FilterNavigator = ({ navigation }) => {
+  const handleReset = () => {
+    navigation.setParams({ resetFilters: true });
+  };
+
+  return (
+    <FilterStack.Navigator>
+      <FilterStack.Screen 
+        name="Фильтры" 
+        component={Filter}
+        initialParams={{ resetFilters: handleReset }} 
+        options={{
+          headerRight: () => (
+             <Button 
+              title={'Сбросить'} 
+              titleStyle={{ color: 'black' }}
+              buttonStyle={{backgroundColor: 'transparent', borderWidth: 0 }}
+              onPress={handleReset} 
+            />
+          )
+        }}
+      />
+    </FilterStack.Navigator>
+  );
+};
+
 
 const DetailNavigator = ({ route })  => (
   <FilterStack.Navigator>
